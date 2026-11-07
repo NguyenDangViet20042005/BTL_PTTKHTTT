@@ -1,0 +1,17 @@
+com\libman\dao\DAO7.class
+com\libman\db\Database7.class
+com\libman\db\SeedData7.class
+com\libman\model\Document7.class
+com\libman\model\DocumentProvide7.class
+com\libman\dao\SupplierDAO7.class
+com\libman\dao\DocumentProvideDAO7.class
+com\libman\dao\DocumentDAO7.class
+com\libman\model\DocumentCopy7.class
+com\libman\model\Supplier7.class
+com\libman\module\search\SearchDocumentModule7.class
+com\libman\dao\DocumentCopyDAO7.class
+com\libman\module\importdocument\ImportDocumentModule7.class
+com\libman\model\ImportInvoice7.class
+com\libman\dao\ImportInvoiceDAO7.class
+com\libman\Main.class
+com\libman\model\ImportDocument7.class

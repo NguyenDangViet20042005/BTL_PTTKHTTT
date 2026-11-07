@@ -1,0 +1,81 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: #fff;
+    color: #111;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.page-shell {
+    width: min(94%, 980px);
+    margin: 18px auto;
+    padding: 18px 22px 24px;
+    border: 5px solid #111;
+    background: #fff;
+}
+h1, h2 { margin: 0 0 24px; text-align: center; color: #111; }
+h1 { font-size: 1.65rem; }
+nav { display: flex; gap: 12px; margin-bottom: 20px; }
+a, button {
+    display: inline-block;
+    color: #111;
+    background: #fff;
+    border: 4px solid #111;
+    border-radius: 0;
+    padding: 5px 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+a:hover, button:hover { background: #e8edf8; }
+input, select {
+    min-width: 220px;
+    padding: 7px 9px;
+    border: 2px solid #111;
+    border-radius: 0;
+    font-size: 1rem;
+}
+label { display: inline-flex; align-items: center; gap: 8px; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+}
+th, td {
+    border: 1px solid #fff;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background: #4778c5;
+    color: #fff;
+    font-size: 1.05rem;
+}
+tbody tr:nth-child(odd) { background: #cbd4e9; }
+tbody tr:nth-child(even) { background: #e8ecf6; }
+.card {
+    border: 3px solid #111;
+    padding: 18px;
+    margin: 18px 0;
+}
+.home { max-width: 760px; text-align: center; margin: 5rem auto; }
+.subtitle { color: #333; font-size: 1.15rem; }
+.module-actions { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; }
+.module-button { display: flex; flex-direction: column; gap: .45rem; min-width: 220px; padding: 1.25rem; }
+.module-button strong { font-size: 1.25rem; }
+.module-button span { font-size: .95rem; }
+.screen-title { text-align: center; font-weight: 700; font-size: 1.2rem; margin-bottom: 28px; }
+.status-line { margin: 24px 0; font-size: 1.05rem; }
+.status-success { font-style: italic; }
+.status-failure { color: #b00020; font-style: italic; font-weight: 700; }
+.action-row { display: flex; justify-content: center; gap: 68px; margin-top: 24px; flex-wrap: wrap; }
+.qr-entry { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+.qr-entry input { min-width: 320px; }
+.supplier-heading { margin: 0 0 18px; font-size: 1.1rem; }
+.error { border: 3px solid #111; padding: 12px; font-weight: 700; }
+@media (max-width: 700px) {
+    .page-shell { width: 98%; padding: 14px 10px; }
+    .action-row { gap: 12px; }
+    table { font-size: .85rem; }
+    th, td { padding: 5px; }
+}
