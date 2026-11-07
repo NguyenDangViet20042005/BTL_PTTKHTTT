@@ -73,9 +73,21 @@ tbody tr:nth-child(even) { background: #e8ecf6; }
 .qr-entry input { min-width: 320px; }
 .supplier-heading { margin: 0 0 18px; font-size: 1.1rem; }
 .error { border: 3px solid #111; padding: 12px; font-weight: 700; }
+.invoice-card { padding: 48px 34px 34px; }
+.invoice-title { margin-bottom: 48px; font-size: 1.8rem; font-weight: 400; }
+.invoice-table { margin-bottom: 64px; }
+.invoice-table th, .invoice-table td { font-size: 1.1rem; }
+.invoice-details { width: min(100%, 620px); margin: 0 auto 34px; font-size: 1.15rem; }
+.invoice-details p { margin: 8px 0; }
+.invoice-actions { text-align: center; }
+.invoice-actions button { font-size: 1.25rem; padding: 8px 16px; }
 @media (max-width: 700px) {
     .page-shell { width: 98%; padding: 14px 10px; }
     .action-row { gap: 12px; }
     table { font-size: .85rem; }
     th, td { padding: 5px; }
+    .invoice-card { padding: 24px 8px; }
+    .invoice-title { margin-bottom: 24px; font-size: 1.35rem; }
+    .invoice-table { margin-bottom: 32px; }
+    .invoice-table th, .invoice-table td { font-size: .85rem; }
 }

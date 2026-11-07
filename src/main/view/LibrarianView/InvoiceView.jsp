@@ -10,11 +10,13 @@
 <%@ page import="com.libman.module.importdocument.ImportDocumentModule7" %>
 <%@ page import="java.math.BigDecimal" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.util.List" %>
 <%
 request.setCharacterEncoding("UTF-8");
 ImportInvoice7 invoice = null;
 String error = null;
+DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 if ("POST".equalsIgnoreCase(request.getMethod())) {
     try {
         String supplierId = request.getParameter("supplierId");
@@ -55,13 +57,43 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
 <% if (error != null) { %>
 <div class="card"><p>Không thể tạo hóa đơn: <%= error %></p></div>
 <% } else if (invoice != null) { %>
-<div class="card"><p>Đã lưu hóa đơn: <strong><%= invoice.id() %></strong></p>
-<p>Nhà cung cấp: <%= invoice.supplier().name() %></p>
-<p>Mã tài liệu: <%= invoice.items().get(0).document().documentCode() %></p>
-<p>Số lượng: <%= invoice.items().get(0).quantity() %></p>
-<p>Đơn giá: <%= invoice.items().get(0).unitPrice() %> VND</p>
-<p>Tổng tiền: <%= invoice.total() %> VND</p>
-<button type="button" onclick="window.print()">In hóa đơn</button></div>
+<div class="invoice-card">
+    <h2 class="invoice-title">id Hóa đơn: <%= invoice.id() %></h2>
+    <table class="invoice-table">
+        <thead>
+        <tr>
+            <th>TT</th>
+            <th>Mã tài liệu</th>
+            <th>Tên tài liệu</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% int itemNumber = 1; for (ImportDocument7 item : invoice.items()) { %>
+        <tr>
+            <td><%= itemNumber++ %></td>
+            <td><%= item.document().documentCode() %></td>
+            <td><%= item.document().name() %></td>
+            <td><%= item.quantity() %></td>
+            <td><%= item.unitPrice() %> VND</td>
+            <td><%= item.amount() %> VND</td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <div class="invoice-details">
+        <p><strong>Tổng tiền:</strong> <%= invoice.total() %> VND</p>
+        <p><strong>Nhân viên làm việc:</strong> <%= invoice.librarianName() %></p>
+        <p><strong>Ngày:</strong> <%= invoice.createdAt().format(dateFormatter) %></p>
+        <p><strong>Nhà cung cấp:</strong> <%= invoice.supplier().name() %></p>
+        <p><strong>Mã nhà cung cấp:</strong> <%= invoice.supplier().id() %></p>
+    </div>
+    <div class="invoice-actions">
+        <button type="button" onclick="window.print()">In hóa đơn</button>
+    </div>
+</div>
 <% } else { %>
 <div class="card"><p>Chưa có dữ liệu hóa đơn.</p></div>
 <% } %>

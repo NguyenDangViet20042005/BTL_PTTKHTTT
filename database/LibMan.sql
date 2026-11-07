@@ -315,3 +315,15 @@ UPDATE d SET
     END
 FROM dbo.Document7 d;
 GO
+
+UPDATE dbo.Document7
+SET author = CASE
+    WHEN document_code LIKE N'LT%' THEN N'Nguyễn Văn A'
+    WHEN document_code LIKE N'CS%' THEN N'Nguyễn Văn B'
+    WHEN document_code LIKE N'VN%' THEN N'Nhiều tác giả'
+    ELSE author
+END
+WHERE document_code LIKE N'LT%'
+   OR document_code LIKE N'CS%'
+   OR document_code LIKE N'VN%';
+GO

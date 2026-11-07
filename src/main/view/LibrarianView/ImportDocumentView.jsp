@@ -84,6 +84,8 @@ try {
 <script>
 const qrInput = document.getElementById('general-qr');
 const rows = document.getElementById('document-rows');
+const importForm = document.getElementById('import-form');
+const scanStatus = document.getElementById('scan-status');
 const addButton = document.getElementById('add-document');
 let rowNumber = 0;
 
@@ -97,19 +99,17 @@ async function addDocumentRow() {
     try {
         const response = await fetch('ImportDocumentView.jsp?qr=' + encodeURIComponent(qr));
         const name = await response.text();
-        const status = document.getElementById('scan-status');
         if (!response.ok) {
-            status.textContent = 'Thất bại';
-            status.className = 'status-failure';
+            scanStatus.textContent = 'Thất bại';
+            scanStatus.className = 'status-failure';
             return;
         }
-        status.textContent = 'Thành công!';
-        status.className = 'status-success';
+        scanStatus.textContent = 'Thành công!';
+        scanStatus.className = 'status-success';
         appendDocumentRow(qr, name);
     } catch (error) {
-        const status = document.getElementById('scan-status');
-        status.textContent = 'Thất bại';
-        status.className = 'status-failure';
+        scanStatus.textContent = 'Thất bại';
+        scanStatus.className = 'status-failure';
     } finally {
         addButton.disabled = false;
         qrInput.focus();
@@ -134,6 +134,14 @@ function escapeHtml(value) {
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
     }[character]));
 }
+
+importForm.addEventListener('reset', () => {
+    rows.replaceChildren();
+    rowNumber = 0;
+    scanStatus.textContent = 'Chưa quét mã';
+    scanStatus.className = 'status-success';
+});
+
 addButton.addEventListener('click', addDocumentRow);
 qrInput.addEventListener('keydown', event => {
     if (event.key === 'Enter') {
