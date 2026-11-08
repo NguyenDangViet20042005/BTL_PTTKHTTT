@@ -12,11 +12,11 @@
     <p class="subtitle">Hệ thống quản lý thư viện</p>
     <p>Chọn module bạn muốn kiểm thử:</p>
     <div class="module-actions">
-        <a class="module-button" href="ReaderView.jsp">
+        <a class="module-button" href="ReaderView/ReaderView.jsp">
             <strong>Reader</strong>
             <span>Test module SearchDocument</span>
         </a>
-        <a class="module-button" href="LibrarianView.jsp">
+        <a class="module-button" href="LibrarianView/LibrarianView.jsp">
             <strong>Librarian</strong>
             <span>Test module ImportDocument</span>
         </a>

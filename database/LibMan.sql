@@ -5,6 +5,21 @@ GO
 USE LibMan;
 GO
 
+IF OBJECT_ID(N'dbo.Librarian7', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Librarian7 (
+        id NVARCHAR(20) NOT NULL PRIMARY KEY,
+        role NVARCHAR(50) NOT NULL,
+        username NVARCHAR(100) NOT NULL UNIQUE,
+        password NVARCHAR(255) NOT NULL,
+        name NVARCHAR(150) NOT NULL,
+        phone NVARCHAR(30) NOT NULL,
+        address NVARCHAR(300) NOT NULL,
+        position NVARCHAR(100) NOT NULL
+    );
+END;
+GO
+
 IF OBJECT_ID(N'dbo.ImportDocument7', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Supplier7 (
@@ -40,12 +55,14 @@ BEGIN
         id NVARCHAR(50) NOT NULL PRIMARY KEY,
         supplier_id NVARCHAR(20) NOT NULL
             CONSTRAINT FK_ImportInvoice7_Supplier7 REFERENCES dbo.Supplier7(id),
-        librarian_name NVARCHAR(150) NOT NULL,
+        librarian_id NVARCHAR(20) NOT NULL
+            CONSTRAINT FK_ImportInvoice7_Librarian7 REFERENCES dbo.Librarian7(id),
         created_at DATETIME2 NOT NULL,
         total DECIMAL(18, 2) NOT NULL
     );
 
     CREATE TABLE dbo.ImportDocument7 (
+        id NVARCHAR(50) NOT NULL UNIQUE,
         invoice_id NVARCHAR(50) NOT NULL
             CONSTRAINT FK_ImportDocument7_Invoice REFERENCES dbo.ImportInvoice7(id),
         document_code NVARCHAR(30) NOT NULL
@@ -54,6 +71,29 @@ BEGIN
         unit_price DECIMAL(18, 2) NOT NULL,
         CONSTRAINT PK_ImportDocument7 PRIMARY KEY (invoice_id, document_code)
     );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Librarian7', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Librarian7 (
+        id NVARCHAR(20) NOT NULL PRIMARY KEY,
+        role NVARCHAR(50) NOT NULL,
+        username NVARCHAR(100) NOT NULL UNIQUE,
+        password NVARCHAR(255) NOT NULL,
+        name NVARCHAR(150) NOT NULL,
+        phone NVARCHAR(30) NOT NULL,
+        address NVARCHAR(300) NOT NULL,
+        position NVARCHAR(100) NOT NULL
+    );
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Librarian7 WHERE id = N'LIB1')
+BEGIN
+    INSERT INTO dbo.Librarian7(id, role, username, password, name, phone, address, position)
+    VALUES (N'LIB1', N'LIBRARIAN', N'librarian7', N'librarian7', N'Librarian7',
+            N'0900000001', N'Địa chỉ thủ thư', N'Nhân viên thư viện');
 END;
 GO
 
@@ -111,6 +151,7 @@ GO
 IF OBJECT_ID(N'dbo.DocumentProvide7', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.DocumentProvide7 (
+        id NVARCHAR(50) NOT NULL UNIQUE,
         document_code NVARCHAR(30) NOT NULL
             CONSTRAINT FK_DocumentProvide7_Document REFERENCES dbo.Document7(document_code),
         supplier_id NVARCHAR(20) NOT NULL
@@ -121,8 +162,44 @@ BEGIN
 END;
 GO
 
-INSERT INTO dbo.DocumentProvide7(document_code, supplier_id, supply_price)
-SELECT d.document_code, d.supplier_id, d.unit_price
+IF COL_LENGTH(N'dbo.DocumentProvide7', N'id') IS NULL
+    ALTER TABLE dbo.DocumentProvide7 ADD id NVARCHAR(50) NULL;
+GO
+
+IF COL_LENGTH(N'dbo.DocumentProvide7', N'id') IS NOT NULL
+BEGIN
+    UPDATE dbo.DocumentProvide7
+    SET id = N'PROV-' + document_code + N'-' + supplier_id
+    WHERE id IS NULL;
+END;
+GO
+
+IF COL_LENGTH(N'dbo.ImportDocument7', N'id') IS NULL
+    ALTER TABLE dbo.ImportDocument7 ADD id NVARCHAR(50) NULL;
+GO
+
+IF COL_LENGTH(N'dbo.ImportDocument7', N'id') IS NOT NULL
+BEGIN
+    UPDATE dbo.ImportDocument7
+    SET id = N'IMP-' + invoice_id + N'-' + document_code
+    WHERE id IS NULL;
+END;
+GO
+
+ALTER TABLE dbo.DocumentProvide7 ALTER COLUMN id NVARCHAR(50) NOT NULL;
+ALTER TABLE dbo.ImportDocument7 ALTER COLUMN id NVARCHAR(50) NOT NULL;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_DocumentProvide7_Id'
+               AND object_id = OBJECT_ID(N'dbo.DocumentProvide7'))
+    ALTER TABLE dbo.DocumentProvide7 ADD CONSTRAINT UQ_DocumentProvide7_Id UNIQUE (id);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_ImportDocument7_Id'
+               AND object_id = OBJECT_ID(N'dbo.ImportDocument7'))
+    ALTER TABLE dbo.ImportDocument7 ADD CONSTRAINT UQ_ImportDocument7_Id UNIQUE (id);
+GO
+
+INSERT INTO dbo.DocumentProvide7(id, document_code, supplier_id, supply_price)
+SELECT N'PROV-' + d.document_code + N'-' + d.supplier_id, d.document_code, d.supplier_id, d.unit_price
 FROM dbo.Document7 d
 WHERE NOT EXISTS (
     SELECT 1 FROM dbo.DocumentProvide7 p
@@ -130,8 +207,9 @@ WHERE NOT EXISTS (
 );
 GO
 
-INSERT INTO dbo.DocumentProvide7(document_code, supplier_id, supply_price)
-SELECT d.document_code, CASE WHEN d.supplier_id = N'BK1' THEN N'NXB1' ELSE N'BK1' END, d.unit_price
+INSERT INTO dbo.DocumentProvide7(id, document_code, supplier_id, supply_price)
+SELECT N'PROV-' + d.document_code + N'-' + CASE WHEN d.supplier_id = N'BK1' THEN N'NXB1' ELSE N'BK1' END,
+       d.document_code, CASE WHEN d.supplier_id = N'BK1' THEN N'NXB1' ELSE N'BK1' END, d.unit_price
 FROM dbo.Document7 d
 WHERE NOT EXISTS (
     SELECT 1 FROM dbo.DocumentProvide7 p
@@ -187,8 +265,8 @@ WHERE NOT EXISTS (
 );
 GO
 
-INSERT INTO dbo.DocumentProvide7(document_code, supplier_id, supply_price)
-SELECT d.document_code, d.supplier_id, d.unit_price
+INSERT INTO dbo.DocumentProvide7(id, document_code, supplier_id, supply_price)
+SELECT N'PROV-' + d.document_code + N'-' + d.supplier_id, d.document_code, d.supplier_id, d.unit_price
 FROM dbo.Document7 d
 WHERE NOT EXISTS (
     SELECT 1 FROM dbo.DocumentProvide7 p
@@ -213,8 +291,8 @@ WHERE NOT EXISTS (
 );
 GO
 
-INSERT INTO dbo.ImportInvoice7(id, supplier_id, librarian_name, created_at, total)
-SELECT v.id, v.supplier_id, v.librarian_name, v.created_at, d.unit_price * v.quantity
+INSERT INTO dbo.ImportInvoice7(id, supplier_id, librarian_id, created_at, total)
+SELECT v.id, v.supplier_id, N'LIB1', v.created_at, d.unit_price * v.quantity
 FROM (VALUES
     (N'INV-SEED-01', N'NXB2', N'Nguyễn An', CONVERT(DATETIME2, '2026-01-05T09:00:00'), N'HP1', 3),
     (N'INV-SEED-02', N'NXB3', N'Trần Bình', CONVERT(DATETIME2, '2026-01-12T10:30:00'), N'LOTR2', 4),
@@ -227,8 +305,8 @@ JOIN dbo.Document7 d ON d.document_code = v.document_code
 WHERE NOT EXISTS (SELECT 1 FROM dbo.ImportInvoice7 i WHERE i.id = v.id);
 GO
 
-INSERT INTO dbo.ImportDocument7(invoice_id, document_code, quantity, unit_price)
-SELECT v.invoice_id, v.document_code, v.quantity, d.unit_price
+INSERT INTO dbo.ImportDocument7(id, invoice_id, document_code, quantity, unit_price)
+SELECT N'IMP-' + v.invoice_id + N'-' + v.document_code, v.invoice_id, v.document_code, v.quantity, d.unit_price
 FROM (VALUES
     (N'INV-SEED-01', N'HP1', 3), (N'INV-SEED-02', N'LOTR2', 4),
     (N'INV-SEED-03', N'GK3', 2), (N'INV-SEED-04', N'NT4', 5),

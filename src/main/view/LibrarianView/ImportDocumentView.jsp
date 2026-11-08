@@ -9,20 +9,22 @@
 request.setCharacterEncoding("UTF-8");
 String lookupQr = request.getParameter("qr");
 if (lookupQr != null) {
-    response.setContentType("text/plain; charset=UTF-8");
+    response.setContentType("application/json; charset=UTF-8");
     if (lookupQr.isBlank()) {
         response.setStatus(400);
-        out.print("General QR không được để trống");
+        out.print("{\"error\":\"General QR không được để trống\"}");
     } else {
         try {
             Document7 document = new DocumentDAO7().getDocument7(lookupQr.trim());
-            out.print(document.name());
+            String documentCode = document.documentCode().replace("\\", "\\\\").replace("\"", "\\\"");
+            String documentName = document.name().replace("\\", "\\\\").replace("\"", "\\\"");
+            out.print("{\"documentCode\":\"" + documentCode + "\",\"name\":\"" + documentName + "\"}");
         } catch (IllegalArgumentException exception) {
             response.setStatus(404);
-            out.print("Không tìm thấy tài liệu");
+            out.print("{\"error\":\"Không tìm thấy tài liệu\"}");
         } catch (SQLException exception) {
             response.setStatus(500);
-            out.print("Không thể tra cứu tài liệu");
+            out.print("{\"error\":\"Không thể tra cứu tài liệu\"}");
         }
     }
     return;
@@ -98,7 +100,7 @@ async function addDocumentRow() {
     addButton.disabled = true;
     try {
         const response = await fetch('ImportDocumentView.jsp?qr=' + encodeURIComponent(qr));
-        const name = await response.text();
+        const document = await response.json();
         if (!response.ok) {
             scanStatus.textContent = 'Thất bại';
             scanStatus.className = 'status-failure';
@@ -106,7 +108,7 @@ async function addDocumentRow() {
         }
         scanStatus.textContent = 'Thành công!';
         scanStatus.className = 'status-success';
-        appendDocumentRow(qr, name);
+        appendDocumentRow(document.documentCode, document.name);
     } catch (error) {
         scanStatus.textContent = 'Thất bại';
         scanStatus.className = 'status-failure';
@@ -116,12 +118,12 @@ async function addDocumentRow() {
     }
 }
 
-function appendDocumentRow(qr, name) {
+function appendDocumentRow(documentCode, name) {
     rowNumber += 1;
     const row = document.createElement('tr');
     row.innerHTML =
         '<td>' + rowNumber + '</td>' +
-        '<td><input type="hidden" name="qr" value="' + escapeHtml(qr) + '">' + escapeHtml(qr) + '</td>' +
+        '<td><input type="hidden" name="qr" value="' + escapeHtml(documentCode) + '">' + escapeHtml(documentCode) + '</td>' +
         '<td>' + escapeHtml(name) + '</td>' +
         '<td><input type="number" name="quantity" min="1" value="1" required></td>' +
         '<td><input type="number" name="unitPrice" min="0" value="10000" required></td>';

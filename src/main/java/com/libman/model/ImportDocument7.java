@@ -1,8 +1,13 @@
 package com.libman.model;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-public record ImportDocument7(Document7 document, int quantity, BigDecimal unitPrice) {
+public record ImportDocument7(String id, Document7 document, int quantity, BigDecimal unitPrice) {
+    public ImportDocument7(Document7 document, int quantity, BigDecimal unitPrice) {
+        this(UUID.randomUUID().toString(), document, quantity, unitPrice);
+    }
+
     public ImportDocument7 {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Số lượng nhập phải lớn hơn 0");

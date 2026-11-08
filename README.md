@@ -15,9 +15,13 @@
   `DetailDocumentView.jsp`, `LibrarianView.jsp`, `SearchSupplierView.jsp`,
   `ImportDocumentView.jsp`, `InvoiceView.jsp`.
 
-Tên lớp giữ theo báo cáo: `Document7`, `DocumentCopy7`, `Supplier7`,
+Tên lớp giữ theo báo cáo: `Document7`, `DocumentCopy7`, `Supplier7`, `Librarian7`,
 `DocumentProvide7`, `ImportDocument7`, `ImportInvoice7`, `DocumentDAO7`, `SupplierDAO7`,
 `DocumentCopyDAO7`, `ImportInvoiceDAO7`.
+
+Bảng `dbo.Librarian7` lưu `id`, `role`, `username`, `password`, `name`, `phone`,
+`address` và `position` của nhân viên thư viện. Các bảng `dbo.DocumentProvide7`
+và `dbo.ImportDocument7` đều có thêm mã định danh `id` riêng.
 
 Các DAO cụ thể kế thừa `DAO7`. Lớp cơ sở quản lý thuộc tính kết nối
 `Connection` dùng chung và cung cấp `getConnection7()`/`close7()` cho các DAO con.

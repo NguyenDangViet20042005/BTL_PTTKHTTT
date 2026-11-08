@@ -6,6 +6,7 @@
 <%@ page import="com.libman.model.Document7" %>
 <%@ page import="com.libman.model.ImportDocument7" %>
 <%@ page import="com.libman.model.ImportInvoice7" %>
+<%@ page import="com.libman.model.Librarian7" %>
 <%@ page import="com.libman.model.Supplier7" %>
 <%@ page import="com.libman.module.importdocument.ImportDocumentModule7" %>
 <%@ page import="java.math.BigDecimal" %>
@@ -41,7 +42,9 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
             items.add(new ImportDocument7(document, Integer.parseInt(quantities[index]),
                     new BigDecimal(unitPrices[index])));
         }
-        invoice = module.createInvoice(supplier, "Librarian7", items);
+        invoice = module.createInvoice(supplier,
+                new Librarian7("LIB1", "LIBRARIAN", "librarian7", "librarian7",
+                        "Librarian7", "0900000001", "Địa chỉ thủ thư", "Nhân viên thư viện"), items);
     } catch (NumberFormatException exception) {
         error = "Số lượng hoặc đơn giá không hợp lệ.";
     } catch (IllegalArgumentException | SQLException exception) {
@@ -85,7 +88,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
     </table>
     <div class="invoice-details">
         <p><strong>Tổng tiền:</strong> <%= invoice.total() %> VND</p>
-        <p><strong>Nhân viên làm việc:</strong> <%= invoice.librarianName() %></p>
+        <p><strong>Nhân viên làm việc:</strong> <%= invoice.librarian().name() %></p>
         <p><strong>Ngày:</strong> <%= invoice.createdAt().format(dateFormatter) %></p>
         <p><strong>Nhà cung cấp:</strong> <%= invoice.supplier().name() %></p>
         <p><strong>Mã nhà cung cấp:</strong> <%= invoice.supplier().id() %></p>

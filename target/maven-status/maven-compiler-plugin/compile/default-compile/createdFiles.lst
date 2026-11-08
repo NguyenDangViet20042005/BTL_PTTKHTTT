@@ -5,6 +5,7 @@ com\libman\model\Document7.class
 com\libman\model\DocumentProvide7.class
 com\libman\dao\SupplierDAO7.class
 com\libman\dao\DocumentProvideDAO7.class
+com\libman\model\Librarian7.class
 com\libman\dao\DocumentDAO7.class
 com\libman\model\DocumentCopy7.class
 com\libman\model\Supplier7.class

@@ -99,9 +99,17 @@ public final class SeedData7 {
     }
 
     private static void seedSupportingData(Connection connection) throws SQLException {
+        try (var librarian = connection.prepareStatement("""
+                IF NOT EXISTS (SELECT 1 FROM Librarian7 WHERE id = 'LIB1')
+                    INSERT INTO Librarian7(id, role, username, password, name, phone, address, position)
+                    VALUES ('LIB1', 'LIBRARIAN', 'librarian7', 'librarian7', N'Librarian7',
+                            '0900000001', N'Địa chỉ thủ thư', N'Nhân viên thư viện')
+                """)) {
+            librarian.executeUpdate();
+        }
         try (var provide = connection.prepareStatement("""
-                INSERT INTO DocumentProvide7(document_code, supplier_id, supply_price)
-                SELECT document_code, supplier_id, unit_price FROM Document7 d
+                INSERT INTO DocumentProvide7(id, document_code, supplier_id, supply_price)
+                SELECT 'PROV-' + document_code + '-' + supplier_id, document_code, supplier_id, unit_price FROM Document7 d
                 WHERE NOT EXISTS (SELECT 1 FROM DocumentProvide7 p
                                   WHERE p.document_code = d.document_code
                                   AND p.supplier_id = d.supplier_id)
@@ -127,11 +135,11 @@ public final class SeedData7 {
         try (var invoice = connection.prepareStatement("""
                 IF NOT EXISTS (SELECT 1 FROM ImportInvoice7 WHERE id = 'INV-SEED-APP')
                 BEGIN
-                    INSERT INTO ImportInvoice7(id, supplier_id, librarian_name, created_at, total)
-                    SELECT 'INV-SEED-APP', d.supplier_id, 'Librarian7', SYSDATETIME(), d.unit_price * 2
+                    INSERT INTO ImportInvoice7(id, supplier_id, librarian_id, created_at, total)
+                    SELECT 'INV-SEED-APP', d.supplier_id, 'LIB1', SYSDATETIME(), d.unit_price * 2
                     FROM Document7 d WHERE d.document_code = 'DR1';
-                    INSERT INTO ImportDocument7(invoice_id, document_code, quantity, unit_price)
-                    SELECT 'INV-SEED-APP', document_code, 2, unit_price
+                    INSERT INTO ImportDocument7(id, invoice_id, document_code, quantity, unit_price)
+                    SELECT 'IMP-INV-SEED-APP-' + document_code, 'INV-SEED-APP', document_code, 2, unit_price
                     FROM Document7 WHERE document_code = 'DR1';
                 END
                 """)) {

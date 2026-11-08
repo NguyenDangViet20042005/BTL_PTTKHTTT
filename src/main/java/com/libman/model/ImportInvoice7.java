@@ -7,7 +7,7 @@ import java.util.List;
 public record ImportInvoice7(
         String id,
         Supplier7 supplier,
-        String librarianName,
+        Librarian7 librarian,
         LocalDateTime createdAt,
         List<ImportDocument7> items) {
 

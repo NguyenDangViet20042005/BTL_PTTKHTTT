@@ -27,6 +27,12 @@ public final class Database7 {
                     CREATE TABLE dbo.Supplier7 (
                         id NVARCHAR(20) NOT NULL PRIMARY KEY, name NVARCHAR(200) NOT NULL,
                         address NVARCHAR(300) NOT NULL, phone NVARCHAR(30) NOT NULL)""");
+            createTable(statement, "Librarian7", """
+                    CREATE TABLE dbo.Librarian7 (
+                        id NVARCHAR(20) NOT NULL PRIMARY KEY, role NVARCHAR(50) NOT NULL,
+                        username NVARCHAR(100) NOT NULL UNIQUE, password NVARCHAR(255) NOT NULL,
+                        name NVARCHAR(150) NOT NULL, phone NVARCHAR(30) NOT NULL,
+                        address NVARCHAR(300) NOT NULL, position NVARCHAR(100) NOT NULL)""");
             createTable(statement, "Document7", """
                     CREATE TABLE dbo.Document7 (
                         id NVARCHAR(30) NOT NULL PRIMARY KEY, general_qr NVARCHAR(100) NOT NULL UNIQUE,
@@ -41,6 +47,7 @@ public final class Database7 {
                         status NVARCHAR(30) NOT NULL)""");
             createTable(statement, "DocumentProvide7", """
                     CREATE TABLE dbo.DocumentProvide7 (
+                        id NVARCHAR(50) NOT NULL UNIQUE,
                         document_code NVARCHAR(30) NOT NULL REFERENCES dbo.Document7(document_code),
                         supplier_id NVARCHAR(20) NOT NULL REFERENCES dbo.Supplier7(id),
                         supply_price DECIMAL(18,2) NOT NULL,
@@ -48,10 +55,11 @@ public final class Database7 {
             createTable(statement, "ImportInvoice7", """
                     CREATE TABLE dbo.ImportInvoice7 (
                         id NVARCHAR(50) NOT NULL PRIMARY KEY, supplier_id NVARCHAR(20) NOT NULL REFERENCES dbo.Supplier7(id),
-                        librarian_name NVARCHAR(150) NOT NULL, created_at DATETIME2 NOT NULL,
+                        librarian_id NVARCHAR(20) NOT NULL REFERENCES dbo.Librarian7(id), created_at DATETIME2 NOT NULL,
                         total DECIMAL(18,2) NOT NULL)""");
             createTable(statement, "ImportDocument7", """
                     CREATE TABLE dbo.ImportDocument7 (
+                        id NVARCHAR(50) NOT NULL UNIQUE,
                         invoice_id NVARCHAR(50) NOT NULL REFERENCES dbo.ImportInvoice7(id),
                         document_code NVARCHAR(30) NOT NULL REFERENCES dbo.Document7(document_code),
                         quantity INT NOT NULL, unit_price DECIMAL(18,2) NOT NULL,

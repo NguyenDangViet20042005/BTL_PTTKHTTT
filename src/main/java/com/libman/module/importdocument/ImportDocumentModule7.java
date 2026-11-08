@@ -43,14 +43,15 @@ public class ImportDocumentModule7 {
         documentDAO.saveDocument7(document);
     }
 
-    public ImportInvoice7 createInvoice(Supplier7 supplier, String librarianName,
+    public ImportInvoice7 createInvoice(Supplier7 supplier, com.libman.model.Librarian7 librarian,
                                         List<ImportDocument7> items) throws SQLException {
         ImportInvoice7 invoice = new ImportInvoice7("INV-" + UUID.randomUUID(), supplier,
-                librarianName, LocalDateTime.now(), items);
+                librarian, LocalDateTime.now(), items);
         for (ImportDocument7 item : items) {
             Document7 document = item.document();
             documentProvideDAO.saveDocument7(
-                    new DocumentProvide7(document.documentCode(), supplier.id(), item.unitPrice()));
+                    new DocumentProvide7(UUID.randomUUID().toString(), document.documentCode(),
+                            supplier.id(), item.unitPrice()));
             documentDAO.saveDocument7(document.documentCode(), item.quantity());
             for (int copy = 1; copy <= item.quantity(); copy++) {
                 documentCopyDAO.saveDocumentCoppy7(new com.libman.model.DocumentCopy7(
